@@ -1,0 +1,59 @@
+
+--
+-- Base de datos: `CIMATEST`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `FOIO2025`
+--
+
+CREATE TABLE `FOIO2025` (
+  `FOCOIDXX` int NOT NULL COMMENT 'ID DE LA OFERTA',
+  `FOCOVERX` decimal(4,1) NOT NULL COMMENT 'VERSION DEL ARCHIVO ',
+  `TIPOPEXX` enum('','IMPORTACION','EXPORTACION','TRANSITO','REGISTRO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'TIPO DE OPERACION',
+  `FICINDID` int NOT NULL COMMENT 'ID DEL INDICADOR',
+  `MODTRAXX` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'INDICA EL MODO DE TRANSPORTE SEPARADO POR ~',
+  `SUCINDXX` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'INDICA LAS SUCURSALES SEPARADO POR ~',
+  `LIMINDIN` int NOT NULL COMMENT 'ID del limite inferior',
+  `LIMINDSU` int NOT NULL COMMENT 'ID del limite superior',
+  `UNIMEDID` int NOT NULL COMMENT 'ID DE LA UNIDAD DE MEDIDA',
+  `METFORXX` int NOT NULL COMMENT 'meta esperada',
+  `METTIPXX` enum('','FIJA','DINAMICA','RANGOS') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tipo de meta',
+  `TOKIDXXX` int NOT NULL COMMENT 'id del tipo de KPI(CIPO0099)',
+  `TOKDESPX` tinytext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Descripcion del KPI provisional',
+  `VARMEIDP` tinyint NOT NULL COMMENT 'Id de la variable meta provisional',
+  `FOIORANG` json NOT NULL COMMENT 'RANGOS',
+  `BANINGEX` enum('','SI','NO') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'BANDERA QUE INDICA SI ES UN KPI ESTANDAR',
+  `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
+  `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
+  `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
+  `REGUSRMX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario de Modificacion',
+  `REGFECMX` date NOT NULL COMMENT 'Fecha de Modificacion del Registro',
+  `REGHORMX` time NOT NULL COMMENT 'Hora de Modificacion del Registro',
+  `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
+  `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='OFERTA COMERCIAL VS INDICADORES' ROW_FORMAT=DYNAMIC;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `FOIO2025`
+--
+ALTER TABLE `FOIO2025`
+  ADD PRIMARY KEY (`FOCOIDXX`,`FOCOVERX`,`TIPOPEXX`,`FICINDID`,`MODTRAXX`,`SUCINDXX`,`TOKIDXXX`),
+  ADD KEY `FOCOIDXX` (`FOCOIDXX`) USING BTREE,
+  ADD KEY `TIPOPEXX` (`TIPOPEXX`) USING BTREE,
+  ADD KEY `FICINDID` (`FICINDID`) USING BTREE,
+  ADD KEY `LIMINDIN` (`LIMINDIN`) USING BTREE,
+  ADD KEY `LIMINDSU` (`LIMINDSU`) USING BTREE,
+  ADD KEY `UNIMEDID` (`UNIMEDID`) USING BTREE,
+  ADD KEY `FOCOVERX` (`FOCOVERX`),
+  ADD KEY `TOKIDXXX` (`TOKIDXXX`),
+  ADD KEY `VARMEIDP` (`VARMEIDP`);
+COMMIT;
+
+

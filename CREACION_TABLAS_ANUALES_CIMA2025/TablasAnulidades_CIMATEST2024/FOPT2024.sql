@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: rds-mysql-cima-dev-test.cluster-ccvz0yxqws4u.us-west-2.rds.amazonaws.com
--- Tiempo de generación: 22-11-2024 a las 11:34:07
+-- Tiempo de generación: 28-11-2024 a las 12:54:57
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.29
 
@@ -27,7 +27,6 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `FOPT2024`
 --
 
-DROP TABLE IF EXISTS `FOPT2024`;
 CREATE TABLE `FOPT2024` (
   `FOCOIDXX` int NOT NULL COMMENT 'ID DE LA OFERTA',
   `FOTPIDXX` int NOT NULL COMMENT 'ID DEL PROYECTO',

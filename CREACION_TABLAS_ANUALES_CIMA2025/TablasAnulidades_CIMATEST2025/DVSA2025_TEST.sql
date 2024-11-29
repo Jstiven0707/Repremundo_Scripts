@@ -1,3 +1,4 @@
+
 -- Base de datos: `CIMATEST`
 --
 
@@ -7,7 +8,6 @@
 -- Estructura de tabla para la tabla `DVSA2025`
 --
 
--- DROP TABLE IF EXISTS `DVSA2025`;
 CREATE TABLE `DVSA2025` (
   `CLIIDXXX` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Id del cliente',
   `IDPROXXX` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Proveedor',
@@ -39,3 +39,5 @@ ALTER TABLE `DVSA2025`
   ADD KEY `SECITEXX` (`SECITEXX`) USING BTREE,
   ADD KEY `IDPROXXX` (`IDPROXXX`) USING BTREE;
 COMMIT;
+
+
