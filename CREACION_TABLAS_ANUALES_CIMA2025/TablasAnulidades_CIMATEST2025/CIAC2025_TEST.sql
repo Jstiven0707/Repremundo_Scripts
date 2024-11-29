@@ -1,4 +1,4 @@
-CREATE TABLE `CIAC2024` (
+CREATE TABLE `CIAC2025` (
   `CIACIDXX` bigint NOT NULL COMMENT 'Id de la Autorizacion',
   `AUTIDXXX` smallint NOT NULL COMMENT 'Id de la Autorizacion',
   `CIACRESX` enum('','AUTORIZADA','RECHAZADA','PENDIENTE') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDIENTE' COMMENT 'bandera que indica el resultado de la autorizacion',
@@ -26,9 +26,9 @@ CREATE TABLE `CIAC2024` (
 --
 
 --
--- Indices de la tabla `CIAC2024`
+-- Indices de la tabla `CIAC2025`
 --
-ALTER TABLE `CIAC2024`
+ALTER TABLE `CIAC2025`
   ADD PRIMARY KEY (`CIACIDXX`),
   ADD KEY `AUTIDXXX` (`AUTIDXXX`),
   ADD KEY `DOCNROXX` (`DOCNROXX`),

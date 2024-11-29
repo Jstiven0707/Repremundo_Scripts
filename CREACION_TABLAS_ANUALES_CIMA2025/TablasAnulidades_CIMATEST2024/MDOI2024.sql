@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: rds-mysql-cima-dev-test.cluster-ccvz0yxqws4u.us-west-2.rds.amazonaws.com
--- Tiempo de generación: 22-11-2024 a las 11:43:37
+-- Tiempo de generación: 28-11-2024 a las 14:24:55
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.29
 
@@ -27,7 +27,6 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `MDOI2024`
 --
 
-DROP TABLE IF EXISTS `MDOI2024`;
 CREATE TABLE `MDOI2024` (
   `DOCNROXX` int NOT NULL COMMENT 'NUMERO DEL DO(MDOSYYYY)',
   `TOKIDXXX` int NOT NULL COMMENT 'ID DEL TIPO DE KPI',

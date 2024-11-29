@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: rds-mysql-cima-dev-test.cluster-ccvz0yxqws4u.us-west-2.rds.amazonaws.com
--- Tiempo de generación: 22-11-2024 a las 11:25:18
+-- Tiempo de generación: 28-11-2024 a las 14:28:27
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.29
 
@@ -27,7 +27,6 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `DSVL2024`
 --
 
-DROP TABLE IF EXISTS `DSVL2024`;
 CREATE TABLE `DSVL2024` (
   `CLIIDXXX` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Id del cliente',
   `IDPROXXX` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Proveedor',

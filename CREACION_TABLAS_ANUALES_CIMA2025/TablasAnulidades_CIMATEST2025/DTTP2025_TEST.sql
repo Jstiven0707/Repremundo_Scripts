@@ -8,7 +8,6 @@
 -- Estructura de tabla para la tabla `DTTP2025`
 --
 
-DROP TABLE IF EXISTS `DTTP2025`;
 CREATE TABLE `DTTP2025` (
   `DTRCNICO` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'NIT Consignatario',
   `DTRDSCIT` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Item de Documento de Transporte (PK)',
