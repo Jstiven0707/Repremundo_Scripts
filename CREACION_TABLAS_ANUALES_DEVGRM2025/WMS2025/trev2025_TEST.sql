@@ -1,27 +1,26 @@
 
---
 -- Base de datos: `WMS`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `fljd2024`
+-- Estructura de tabla para la tabla `trev2025`
 --
 
-CREATE TABLE IF NOT EXISTS `fljd2024` (
-  `comidxxx` varchar(1) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tipo de consecutivo',
-  `comcodxx` varchar(3) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Numero de comprobante',
-  `comcscxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Consecutivo de comprobante',
-  `codfacxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Codigo de factura',
+CREATE TABLE IF NOT EXISTS `trev2025` (
+  `trevidxx` int(10) NOT NULL AUTO_INCREMENT,
+  `dtrcscxx` varchar(11) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Consecutivo Documento de Transporte',
+  `eventype` varchar(15) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Identificador del evento',
+  `evmsgcli` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `regusrxx` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Usuario que crea el registro',
   `regfecxx` date NOT NULL COMMENT 'Fecha en que se crea el registro',
   `reghorxx` time NOT NULL COMMENT 'Hora en que se crea el registro',
   `regusrmx` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Usuario que modifica el registro',
   `regfecmx` date NOT NULL COMMENT 'Fecha en que se modifica el registro',
-  `reghormx` time NOT NULL COMMENT 'Hora en que se medifica el registro',
+  `reghormx` time NOT NULL COMMENT 'Hora en que se modifica el registro',
   `regestxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Estado del registro',
   `regstamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'MODIFICADO',
-  PRIMARY KEY (`comidxxx`,`comcodxx`,`comcscxx`,`codfacxx`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='RelaciÃ³n entre liquidaciones y facturas';
+  PRIMARY KEY (`trevidxx`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Eventos de transaccion' AUTO_INCREMENT=9 ;
 

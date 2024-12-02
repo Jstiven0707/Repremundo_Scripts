@@ -6,10 +6,10 @@
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `fljd2024`
+-- Estructura de tabla para la tabla `fljd2025`
 --
 
-CREATE TABLE IF NOT EXISTS `fljd2024` (
+CREATE TABLE IF NOT EXISTS `fljd2025` (
   `comidxxx` varchar(1) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tipo de consecutivo',
   `comcodxx` varchar(3) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Numero de comprobante',
   `comcscxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Consecutivo de comprobante',

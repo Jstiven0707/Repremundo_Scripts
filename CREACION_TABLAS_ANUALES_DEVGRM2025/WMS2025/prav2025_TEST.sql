@@ -1,19 +1,20 @@
 
---
 -- Base de datos: `WMS`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `fljd2024`
+-- Estructura de tabla para la tabla `prav2025`
 --
 
-CREATE TABLE IF NOT EXISTS `fljd2024` (
-  `comidxxx` varchar(1) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tipo de consecutivo',
-  `comcodxx` varchar(3) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Numero de comprobante',
-  `comcscxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Consecutivo de comprobante',
-  `codfacxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Codigo de factura',
+CREATE TABLE IF NOT EXISTS `prav2025` (
+  `preaviid` varchar(12) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Consecutivo',
+  `depidxxx` varchar(5) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Deposito',
+  `dtrdtrxx` varchar(25) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Documento de transporte',
+  `cliidxxx` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Id del Cliente',
+  `dtrmanxx` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Numero de manifiesto',
+  `pesdocxx` decimal(10,2) NOT NULL COMMENT 'Peso documental',
   `regusrxx` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Usuario que crea el registro',
   `regfecxx` date NOT NULL COMMENT 'Fecha en que se crea el registro',
   `reghorxx` time NOT NULL COMMENT 'Hora en que se crea el registro',
@@ -22,6 +23,6 @@ CREATE TABLE IF NOT EXISTS `fljd2024` (
   `reghormx` time NOT NULL COMMENT 'Hora en que se medifica el registro',
   `regestxx` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Estado del registro',
   `regstamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'MODIFICADO',
-  PRIMARY KEY (`comidxxx`,`comcodxx`,`comcscxx`,`codfacxx`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='RelaciÃ³n entre liquidaciones y facturas';
+  PRIMARY KEY (`preaviid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Preavisos de llegada';
 
