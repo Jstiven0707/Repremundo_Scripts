@@ -6,7 +6,7 @@
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `CIPO0200`
+-- Estructura de tabla Ajustada  para la tabla `CIPO0200`
 --
 
 CREATE TABLE `CIPO0200` (
@@ -38,4 +38,9 @@ CREATE TABLE `CIPO0200` (
 ALTER TABLE `CIPO0200`
   ADD PRIMARY KEY (`CADVIDXX`);
 COMMIT;
+
+-- DROP COLUMN CIPO0200
+ALTER TABLE `CIPO0200`
+DROP COLUMN `CADVVALX`;
+
 
