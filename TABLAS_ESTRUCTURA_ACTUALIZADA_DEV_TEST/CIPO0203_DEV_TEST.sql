@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: rds-mysql-cima-dev-test.cluster-ccvz0yxqws4u.us-west-2.rds.amazonaws.com
--- Tiempo de generación: 04-12-2024 a las 09:16:59
+-- Tiempo de generación: 04-12-2024 a las 09:46:11
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.29
 
@@ -24,16 +24,21 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `CIPO0152`
+-- Estructura de tabla para la tabla `CIPO0203`
 --
 
-CREATE TABLE `CIPO0152` (
-  `PROIDXXX` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'CODIGO DEL PRODUCTO (CIPO0141)',
-  `CLIIDXXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nit cliente',
-  `IDPROXXX` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DEL PROVEEDOR (CIPO0050)',
-  `DESIDXXX` int NOT NULL COMMENT 'ID DEL DESCRIPTOR (CIPO0037)',
-  `PREIDXXX` smallint NOT NULL COMMENT 'ID DE LA PRECONDICION',
-  `PRDESVAX` tinytext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'DESCRIPTOR',
+CREATE TABLE `CIPO0203` (
+  `CAPSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DEL CAPITULO',
+  `PARSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE LA PARTIDA',
+  `ARMSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DEL SISTEMA ARMONIZADO',
+  `ANDSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE ANDINA',
+  `SUBSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE 2 DIGITOS DE LA SUBPARTIDA',
+  `SUBIDXXX` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE LA SUBPARTIDA(CODIGO ARANCELARIO)',
+  `SECDESID` smallint NOT NULL COMMENT 'INICIA EN 100 POR CADA SUBPARTIDA,SECUENCIA DE DESDOBLAMIENTO',
+  `DESMANSU` enum('','SI','NO') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'BANDERA QUE INDICA SI APLICA MANTENER LA SUBPARTIDA ACTUAL',
+  `DESMANDE` enum('','SI','NO') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'BANDERA QUE INDICA SI APLICA DESDOBLAMIENTO',
+  `DESMANFE` date NOT NULL COMMENT 'FECHA FINAL DE VIGENCIA',
+  `DESMANJU` tinytext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'JUSTIFICACION',
   `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
   `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
   `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
@@ -42,22 +47,17 @@ CREATE TABLE `CIPO0152` (
   `REGHORMX` time NOT NULL COMMENT 'Hora de Modificacion del Registro',
   `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
   `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='PRODUCTO VS DESCRIPCIONES MINIMAS';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SUBPARTIDA VS DESDOBLAMIENTOS';
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `CIPO0152`
+-- Indices de la tabla `CIPO0203`
 --
-ALTER TABLE `CIPO0152`
-  ADD PRIMARY KEY (`PROIDXXX`,`CLIIDXXX`,`IDPROXXX`,`DESIDXXX`),
-  ADD KEY `PROIDXXX` (`PROIDXXX`),
-  ADD KEY `CLIIDXXX` (`CLIIDXXX`),
-  ADD KEY `IDPROXXX` (`IDPROXXX`),
-  ADD KEY `DESIDXXX` (`DESIDXXX`),
-  ADD KEY `PROIDXXX_2` (`PROIDXXX`,`CLIIDXXX`,`IDPROXXX`,`DESIDXXX`,`PREIDXXX`);
+ALTER TABLE `CIPO0203`
+  ADD PRIMARY KEY (`CAPSUBXX`,`PARSUBXX`,`ARMSUBXX`,`ANDSUBXX`,`SUBSUBXX`,`SUBIDXXX`,`SECDESID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
