@@ -14,7 +14,7 @@ CREATE TABLE `CIPO0050` (
   `IDPROXXX` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DEL PROVEEDOR',
   `PRORAZXX` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'razon social del proveedor',
   `PROEMAXX` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'email del proveedor',
-  `PROCONVE` enum('','1','2','3') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'CODIGO DE CONDICION DEL VENDEDOR',
+  `PROCONVE` enum('','1','2','3') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL  DEFAULT '' COMMENT 'CODIGO DE CONDICION DEL VENDEDOR',
   `PROCONTX` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ESPECIFIQUE LA CONDICION DEL PROVEEDOR',
   `NIVELIDX` int NOT NULL COMMENT 'Id nivel comercial',
   `PROASUXX` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'asunto del correo',
