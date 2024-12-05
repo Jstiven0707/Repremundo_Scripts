@@ -1,0 +1,19 @@
+
+
+CREATE TABLE IF NOT EXISTS `DSAE2025` (
+  `ANTIDXXX` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Concecutivo',
+  `PUCIDXXX` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Id Cuenta Puc',
+  `COMREFXX` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Concepto',
+  `ANTTIPXX` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Tipo PCC o IP',
+  `ANTVLRXX` decimal(17,2) NOT NULL COMMENT 'Valor',
+  `REGUSRXX` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Usuario Creación',
+  `REGFECXX` date NOT NULL COMMENT 'Fecha Creación',
+  `REGHORXX` time NOT NULL COMMENT 'Hora Creación',
+  `REGUSRMX` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL COMMENT 'Usuario Modificación',
+  `REGFECMX` date NOT NULL COMMENT 'Fecha Modificación',
+  `REGHORMX` time NOT NULL COMMENT 'Hora Modificación',
+  `REGESTXX` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'MODIFICADO',
+  PRIMARY KEY (`ANTIDXXX`,`PUCIDXXX`,`COMREFXX`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci COMMENT='Detalle de Anticipos para Exportación';
+
