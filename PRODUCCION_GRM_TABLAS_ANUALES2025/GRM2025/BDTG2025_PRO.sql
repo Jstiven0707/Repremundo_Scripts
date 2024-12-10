@@ -1,0 +1,60 @@
+
+
+CREATE TABLE `BDTG2025` (
+  `CONSBDTG` int(11) NOT NULL COMMENT 'Consecutivo',
+  `PROIDXXX` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `BDGTTIPO` varchar(10) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tipo de Trazabilidad',
+  `PRODESXX` text COLLATE utf8_unicode_ci NOT NULL,
+  `PROUSRXX` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Usuario que realiza la Trazabilidad',
+  `DOCNROXX` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `REGFECMR` date NOT NULL COMMENT 'Fecha de Modificacion del Registro Para RIO',
+  `REGHORMR` time NOT NULL COMMENT 'Hora de Modificacion del Registro Para RIO',
+  `FECCREXX` date NOT NULL,
+  `HORCREXX` time NOT NULL,
+  `REGUSRXX` varchar(12) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `REGFECXX` date NOT NULL DEFAULT '0000-00-00',
+  `REGMODXX` date NOT NULL DEFAULT '0000-00-00',
+  `REGHORXX` time NOT NULL,
+  `REGESTXX` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'MODIFICADO'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Bodega Trazabilidad General' ROW_FORMAT=DYNAMIC;
+
+--
+-- Disparadores `BDTG2025`
+--
+DELIMITER $$
+CREATE TRIGGER `BDTG2025` BEFORE INSERT ON `BDTG2025` FOR EACH ROW BEGIN
+declare tipo VARCHAR(20);
+set tipo = (SELECT MDOS2025.DOCTIPXX from MDOS2025 where MDOS2025.DOCNROXX = NEW.DOCNROXX);
+if(tipo = 'IMPORTACION') then
+	SET NEW.`REGFECMR`= NOW();
+	SET NEW.`REGHORMR`= NOW();
+end if;
+END
+$$
+DELIMITER ;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `BDTG2025`
+--
+ALTER TABLE `BDTG2025`
+  ADD PRIMARY KEY (`CONSBDTG`,`PROIDXXX`,`DOCNROXX`) USING BTREE,
+  ADD KEY `DOCNROXX` (`DOCNROXX`) USING BTREE,
+  ADD KEY `PROIDXXX` (`PROIDXXX`,`DOCNROXX`) USING BTREE;
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `BDTG2025`
+--
+ALTER TABLE `BDTG2025`
+  MODIFY `CONSBDTG` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Consecutivo';
+COMMIT;
+
+
