@@ -1,0 +1,11 @@
+
+CREATE TABLE IF NOT EXISTS `SCLO2025` (
+  `LOGUSRXX` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
+  `LOGIPXXX` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+  `LOGHOSTX` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `REGFECXX` date NOT NULL,
+  `REGHORXX` time NOT NULL,
+  `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Timestamp'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Registro de Login en el Sistema';
+
+
