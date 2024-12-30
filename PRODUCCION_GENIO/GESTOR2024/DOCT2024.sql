@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: dev1-geniomysql.repremundo.com.co
--- Tiempo de generación: 30-12-2024 a las 11:36:02
+-- Tiempo de generación: 30-12-2024 a las 12:15:04
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.25
 
@@ -24,33 +24,33 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `DOMD2023`
+-- Estructura de tabla para la tabla `DOCT2024`
 --
 
-CREATE TABLE `DOMD2023` (
-  `IDARCHXX` bigint NOT NULL COMMENT 'ID DEL ARCHIVO',
-  `DOCNROXX` varchar(15) NOT NULL COMMENT 'NUMERO DEL DO',
+CREATE TABLE `DOCT2024` (
+  `IDARCHXX` bigint NOT NULL COMMENT 'ID del archivo',
+  `DOCCSCID` int NOT NULL COMMENT 'ID de la trazabilidad',
+  `ESTADOXX` enum('CREADO','INACTIVADO','ELIMINADO','REEMPLAZO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `DOCOBSXX` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'observacion',
   `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
   `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
   `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
+  `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
   `REGUSRMX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario de Modificacion',
   `REGFECMX` date NOT NULL COMMENT 'Fecha de Modificacion del Registro',
   `REGHORMX` time NOT NULL COMMENT 'Hora de Modificacion del Registro',
-  `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
   `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='PAQUETE VS OPERACION';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='paquete documental vs trazabilidad';
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `DOMD2023`
+-- Indices de la tabla `DOCT2024`
 --
-ALTER TABLE `DOMD2023`
-  ADD PRIMARY KEY (`IDARCHXX`,`DOCNROXX`),
-  ADD KEY `IDARCHXX` (`IDARCHXX`),
-  ADD KEY `DOCNROXX` (`DOCNROXX`);
+ALTER TABLE `DOCT2024`
+  ADD PRIMARY KEY (`IDARCHXX`,`DOCCSCID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

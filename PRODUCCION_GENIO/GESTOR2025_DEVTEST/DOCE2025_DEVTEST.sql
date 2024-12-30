@@ -1,33 +1,6 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: dev1-geniomysql.repremundo.com.co
--- Tiempo de generación: 30-12-2024 a las 11:35:12
--- Versión del servidor: 8.0.32
--- Versión de PHP: 8.1.25
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `GESTORDEV`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `DOCE2023`
---
-
-CREATE TABLE `DOCE2023` (
+CREATE TABLE `DOCE2025` (
   `IDARCHXX` bigint NOT NULL COMMENT 'ID DEL ARCHIVO',
   `METIDXXX` varchar(20) NOT NULL COMMENT 'NOMBRE MAQUINA DEL METADATO (GEST0004)',
   `DOCEIDXX` bigint NOT NULL COMMENT 'INICIA EN 100 POR CADA IDARC',
@@ -47,12 +20,9 @@ CREATE TABLE `DOCE2023` (
 --
 
 --
--- Indices de la tabla `DOCE2023`
+-- Indices de la tabla `DOCE2025`
 --
-ALTER TABLE `DOCE2023`
+ALTER TABLE `DOCE2025`
   ADD PRIMARY KEY (`IDARCHXX`,`DOCEIDXX`);
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

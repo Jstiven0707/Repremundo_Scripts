@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: dev1-geniomysql.repremundo.com.co
--- Tiempo de generación: 30-12-2024 a las 11:36:02
+-- Tiempo de generación: 30-12-2024 a las 12:15:19
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.25
 
@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `DOMD2023`
+-- Estructura de tabla para la tabla `DOMD2024`
 --
 
-CREATE TABLE `DOMD2023` (
+CREATE TABLE `DOMD2024` (
   `IDARCHXX` bigint NOT NULL COMMENT 'ID DEL ARCHIVO',
   `DOCNROXX` varchar(15) NOT NULL COMMENT 'NUMERO DEL DO',
   `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
@@ -45,12 +45,12 @@ CREATE TABLE `DOMD2023` (
 --
 
 --
--- Indices de la tabla `DOMD2023`
+-- Indices de la tabla `DOMD2024`
 --
-ALTER TABLE `DOMD2023`
+ALTER TABLE `DOMD2024`
   ADD PRIMARY KEY (`IDARCHXX`,`DOCNROXX`),
-  ADD KEY `IDARCHXX` (`IDARCHXX`),
-  ADD KEY `DOCNROXX` (`DOCNROXX`);
+  ADD KEY `DOCNROXX` (`DOCNROXX`),
+  ADD KEY `IDARCHXX` (`IDARCHXX`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

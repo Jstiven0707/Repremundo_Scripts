@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: dev1-geniomysql.repremundo.com.co
--- Tiempo de generación: 30-12-2024 a las 11:37:49
+-- Tiempo de generación: 30-12-2024 a las 12:16:24
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.25
 

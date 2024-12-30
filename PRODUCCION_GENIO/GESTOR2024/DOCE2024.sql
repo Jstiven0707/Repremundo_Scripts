@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: dev1-geniomysql.repremundo.com.co
--- Tiempo de generación: 30-12-2024 a las 11:36:02
+-- Tiempo de generación: 30-12-2024 a las 12:14:51
 -- Versión del servidor: 8.0.32
 -- Versión de PHP: 8.1.25
 
@@ -24,12 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `DOMD2023`
+-- Estructura de tabla para la tabla `DOCE2024`
 --
 
-CREATE TABLE `DOMD2023` (
+CREATE TABLE `DOCE2024` (
   `IDARCHXX` bigint NOT NULL COMMENT 'ID DEL ARCHIVO',
-  `DOCNROXX` varchar(15) NOT NULL COMMENT 'NUMERO DEL DO',
+  `METIDXXX` varchar(20) NOT NULL COMMENT 'NOMBRE MAQUINA DEL METADATO (GEST0004)',
+  `DOCEIDXX` bigint NOT NULL COMMENT 'INICIA EN 100 POR CADA IDARC',
+  `DOCEVALX` tinytext NOT NULL COMMENT 'VALOR',
   `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
   `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
   `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
@@ -38,19 +40,17 @@ CREATE TABLE `DOMD2023` (
   `REGHORMX` time NOT NULL COMMENT 'Hora de Modificacion del Registro',
   `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
   `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='PAQUETE VS OPERACION';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Paquete tipificados gestor documenta vs metadatos excel';
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `DOMD2023`
+-- Indices de la tabla `DOCE2024`
 --
-ALTER TABLE `DOMD2023`
-  ADD PRIMARY KEY (`IDARCHXX`,`DOCNROXX`),
-  ADD KEY `IDARCHXX` (`IDARCHXX`),
-  ADD KEY `DOCNROXX` (`DOCNROXX`);
+ALTER TABLE `DOCE2024`
+  ADD PRIMARY KEY (`IDARCHXX`,`DOCEIDXX`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

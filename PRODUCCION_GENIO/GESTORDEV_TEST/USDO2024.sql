@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `USDO2024` (
   `USRIDXXX` varchar(15) NOT NULL COMMENT 'Id del Usuario',
-  `IDARCHXX` int NOT NULL COMMENT 'Id del Archivo',
+  `IDARCHXX` bigint NOT NULL COMMENT 'Id del Archivo',
   `SECGENID` int NOT NULL COMMENT 'Secuencia de Agendamiento',
   `TIPDIVXX` enum('SEPARADO','UNIDO') NOT NULL COMMENT 'Bandera que indica como se debe organizar',
   `REGUSRXX` varchar(20) NOT NULL COMMENT 'Usuario Creacion del Registro',
