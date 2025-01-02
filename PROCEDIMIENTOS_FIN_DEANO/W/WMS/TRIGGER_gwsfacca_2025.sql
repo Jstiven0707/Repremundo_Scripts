@@ -1,0 +1,36 @@
+BEGIN
+
+
+
+UPDATE LOG.esgw2023
+SET numoplxx= concat(NEW.PREFACTX,'-',NEW.NUMFACTX)
+WHERE numordco=concat(NEW.PREFPEDX,'-',NEW.NUMPEDXX);
+
+
+
+UPDATE LOG.esgw2024
+SET numoplxx= concat(NEW.PREFACTX,'-',NEW.NUMFACTX)
+WHERE numordco=concat(NEW.PREFPEDX,'-',NEW.NUMPEDXX);
+
+
+UPDATE LOG.pgwh2023
+SET numoplxx= concat(NEW.PREFACTX,'-',NEW.NUMFACTX),
+numfactx=NEW.NUMFACTX,
+recaudox=NEW.RECAUDOX,
+vlrecaud=NEW.VLRECAUD,
+totlprce=NEW.TOTLPRCE
+WHERE numordco=concat(NEW.PREFPEDX,'-',NEW.NUMPEDXX);
+
+
+
+UPDATE LOG.pgwh2024
+SET numoplxx= concat(NEW.PREFACTX,'-',NEW.NUMFACTX),
+numfactx=NEW.NUMFACTX,
+recaudox=NEW.RECAUDOX,
+vlrecaud=NEW.VLRECAUD,
+totlprce=NEW.TOTLPRCE
+WHERE numordco=concat(NEW.PREFPEDX,'-',NEW.NUMPEDXX);
+
+
+
+END
