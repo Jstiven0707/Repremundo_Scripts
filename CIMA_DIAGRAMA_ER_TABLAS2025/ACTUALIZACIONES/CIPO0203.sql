@@ -1,0 +1,70 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: rds-mysql-cima-dev-test.cluster-ccvz0yxqws4u.us-west-2.rds.amazonaws.com
+-- Tiempo de generación: 03-01-2025 a las 14:04:38
+-- Versión del servidor: 8.0.32
+-- Versión de PHP: 8.1.29
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `CIMATEST`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `CIPO0203`
+--
+
+CREATE TABLE `CIPO0203` (
+  `CAPSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DEL CAPITULO',
+  `PARSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE LA PARTIDA',
+  `ARMSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DEL SISTEMA ARMONIZADO',
+  `ANDSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE ANDINA',
+  `SUBSUBXX` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE 2 DIGITOS DE LA SUBPARTIDA',
+  `SUBIDXXX` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ID DE LA SUBPARTIDA(CODIGO ARANCELARIO)',
+  `SECDESID` smallint NOT NULL COMMENT 'INICIA EN 100 POR CADA SUBPARTIDA,SECUENCIA DE DESDOBLAMIENTO',
+  `DESMANSU` enum('','SI','NO') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'BANDERA QUE INDICA SI APLICA MANTENER LA SUBPARTIDA ACTUAL',
+  `DESMANDE` enum('','SI','NO') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'BANDERA QUE INDICA SI APLICA DESDOBLAMIENTO',
+  `DESMANFE` date NOT NULL COMMENT 'FECHA FINAL DE VIGENCIA',
+  `DESMANJU` tinytext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'JUSTIFICACION',
+  `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
+  `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
+  `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
+  `REGUSRMX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario de Modificacion',
+  `REGFECMX` date NOT NULL COMMENT 'Fecha de Modificacion del Registro',
+  `REGHORMX` time NOT NULL COMMENT 'Hora de Modificacion del Registro',
+  `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
+  `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SUBPARTIDA VS DESDOBLAMIENTOS';
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `CIPO0203`
+--
+ALTER TABLE `CIPO0203`
+  ADD PRIMARY KEY (`CAPSUBXX`,`PARSUBXX`,`ARMSUBXX`,`ANDSUBXX`,`SUBSUBXX`,`SUBIDXXX`,`SECDESID`),
+  ADD KEY `idx_PARSUBXX` (`PARSUBXX`),
+  ADD KEY `idx_ARMSUBXX` (`ARMSUBXX`),
+  ADD KEY `idx_ANDSUBXX` (`ANDSUBXX`),
+  ADD KEY `idx_SUBSUBXX` (`SUBSUBXX`),
+  ADD KEY `idx_SUBIDXXX` (`SUBIDXXX`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
