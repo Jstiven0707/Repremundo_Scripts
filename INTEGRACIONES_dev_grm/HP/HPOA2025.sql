@@ -1,0 +1,27 @@
+CREATE TABLE HPOA2025 (
+    HPOCIDXX BIGINT(12) NOT NULL COMMENT 'ID de la cabecera siempre inicia con el año (MessageHeader.ID)',
+    HPOIIDXX VARCHAR(35) NOT NULL COMMENT 'Identificador de la importación (ImportDeclaration.ID)',
+    HPOAIDXX SMALLINT NOT NULL COMMENT 'Identificador de la secuencia del representative additional party, por cada HPOCIDXX y HPOIIDXX, debe iniciar en 100 e incrementar',
+    HPOAAPII VARCHAR(32) NOT NULL COMMENT 'Identificador de la persona adicional (ImportDeclaration.AdditionalParty.InternalID)',
+    HPOAAPTA VARCHAR(20) NOT NULL COMMENT 'Identificador del impuesto (ImportDeclaration.AdditionalParty.TaxID)',
+    HPOAAPRO VARCHAR(10) NOT NULL COMMENT 'Código del rol (ImportDeclaration.AdditionalParty.RoleCode)',
+    HPOAAPOF TINYTEXT NOT NULL COMMENT 'Nombre de la organización que representa (ImportDeclaration.AdditionalParty.Address.OrganisationFormattedName)',
+    HPOAAPCC VARCHAR(3) NOT NULL COMMENT 'Código del país (ImportDeclaration.AdditionalParty.Address.PhysicalAddress.CountryCode)',
+    HPOAAPRC VARCHAR(6) NOT NULL COMMENT 'Código de la región (ImportDeclaration.AdditionalParty.Address.PhysicalAddress.RegionCode)',
+    HPOAAPSP VARCHAR(10) NOT NULL COMMENT 'Código postal (ImportDeclaration.AdditionalParty.Address.PhysicalAddress.StreetPostalCode)',
+    HPOAAPCN VARCHAR(40) NOT NULL COMMENT 'Nombre de la ciudad (ImportDeclaration.AdditionalParty.Address.PhysicalAddress.CityName)',
+    HPOAAPAC VARCHAR(40) NOT NULL COMMENT 'Nombre adicional de la ciudad (ImportDeclaration.AdditionalParty.Address.PhysicalAddress.AdditionalCityName)',
+    HPOAAPSN VARCHAR(60) NOT NULL COMMENT 'Dirección (ImportDeclaration.AdditionalParty.Address.PhysicalAddress.StreetName)',
+    REGUSRXX VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
+    REGFECXX DATE NOT NULL COMMENT 'Fecha de Creacion del Registro',
+    REGHORXX TIME NOT NULL COMMENT 'Hora de Creacion del Registro',
+    REGUSRMX VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario de Modificacion',
+    REGFECMX DATE NOT NULL COMMENT 'Fecha de Modificacion del Registro',
+   REGHORMX TIME NOT NULL COMMENT 'Hora de Modificaion del Registro',
+   REGESTXX ENUM('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro ',
+   REGSTAMP TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado',
+    
+    PRIMARY KEY (`HPOCIDXX`,`HPOIIDXX`,`HPOAIDXX`),
+    KEY IDX_HPOCIDXX(HPOCIDXX),
+    KEY IDX_HPOIIDXX(HPOIIDXX)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'CUSRES HEADER, IMPORT DECLARATION VS ADDITIONAL PARTY';
