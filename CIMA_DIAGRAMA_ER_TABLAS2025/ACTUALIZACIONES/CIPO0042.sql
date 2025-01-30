@@ -1,0 +1,36 @@
+CREATE TABLE `CIPO0042` (
+  `CLIIDXXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nit cliente',
+  `CLIPROPV` enum('','MATERIAS PRIMAS E INSUMOS','BIENES DE CAPITAL Y REPUESTOS','REPOSICION DE MATERIAS PRIMAS') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `CLINUMPR` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'NUMERO DEL PROGRAMA',
+  `CLIAPLDE` enum('','SI','NO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'BANDERA QUE INDICA SI APLICA FECHA DE DEMOSTRACION',
+  `CLIFECDE` date NOT NULL COMMENT 'FECHA DE DEMOSTRACION PLAN VALLEJO',
+  `CLINUMRE` tinytext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'numero de reposicion',
+  `CLIAPLVA` enum('','SI','NO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Bandera que Indica si Aplica Plan de Vallejo Activo',
+  `CLIFECRE` date NOT NULL COMMENT 'Fecha Numero de Reposicion',
+  `REGUSRXX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
+  `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
+  `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
+  `REGUSRMX` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario de Modificacion',
+  `REGFECMX` date NOT NULL COMMENT 'Fecha de Modificacion del Registro',
+  `REGHORMX` time NOT NULL COMMENT 'Hora de Modificacion del Registro',
+  `REGESTXX` enum('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro',
+  `REGSTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='CLIENTE VS DATOS PLAN VALLEJO' ROW_FORMAT=DYNAMIC;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `CIPO0042`
+--
+ALTER TABLE `CIPO0042`
+  ADD PRIMARY KEY (`CLIIDXXX`,`CLINUMPR`) USING BTREE,
+  ADD KEY `CLIIDXXX` (`CLIIDXXX`) USING BTREE;
+COMMIT;
+
+
+
+-- ACTUALIZACION DICCIONARIO
+ALTER TABLE CIPO0042
+ADD COLUMN CLIFECRA  date NOT NULL COMMENT 'Fecha de Radicacion Poder';

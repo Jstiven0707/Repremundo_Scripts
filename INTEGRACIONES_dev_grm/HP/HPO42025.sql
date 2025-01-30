@@ -1,0 +1,25 @@
+CREATE TABLE HPO42025 (
+    HPOCIDXX BIGINT(12) NOT NULL COMMENT 'ID de la cabecera, siempre inicia con el año (MessageHeader.ID)',
+    HPOIIDXX VARCHAR(35) NOT NULL COMMENT 'Identificador de la importación (ImportDeclaration.ID)',
+    HPOJIDXX SMALLINT NOT NULL COMMENT 'Identificador de la secuencia del texto natural, por cada HPOCIDXX y HPOIIDXX',
+    HPO4IDXX SMALLINT NOT NULL COMMENT 'Identificador del documento adicional, por cada HPOCIDXX, HPOIIDXX y HPOJIDXX',
+    HPO4IDCO VARCHAR(10) COMMENT 'Identificador de la autoridad (ImportDeclaration.Item.OtherGovernmentAuthority.IdentificationCode)',
+    HPO4IRCO VARCHAR(5) COMMENT 'Identificador del código de respuesta (ImportDeclaration.Item.OtherGovernmentAuthority.InformationRequestCode)',
+    HPO4PCOD VARCHAR(5) COMMENT 'Identificador del programa (ImportDeclaration.Item.OtherGovernmentAuthority.Program.Code)',
+    HPO4PIPC VARCHAR(3) COMMENT 'Código del programa que procesó (ImportDeclaration.Item.OtherGovernmentAuthority.Program.InformationProcessingCode)',
+    HPO4PIDR VARCHAR(3) COMMENT 'Código de la razón del programa que procesó (ImportDeclaration.Item.OtherGovernmentAuthority.Program.InformationNonDisseminationReasonCode)',
+    HPO4PRIN VARCHAR(3) COMMENT 'Código del indicador (ImportDeclaration.Item.OtherGovernmentAuthority.Program.RelevanceIndicator)',
+	REGUSRXX VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
+    REGFECXX DATE NOT NULL COMMENT 'Fecha de Creacion del Registro',
+    REGHORXX TIME NOT NULL COMMENT 'Hora de Creacion del Registro',
+    REGUSRMX VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario de Modificacion',
+    REGFECMX DATE NOT NULL COMMENT 'Fecha de Modificacion del Registro',
+    REGHORMX TIME NOT NULL COMMENT 'Hora de Modificaion del Registro',
+    REGESTXX ENUM('ACTIVO','INACTIVO') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del Registro ',
+    REGSTAMP TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Modificado',
+
+    PRIMARY KEY (`HPOCIDXX`, `HPOIIDXX`,`HPOJIDXX`, `HPO4IDXX`),
+	KEY IDX_HPOCIDXX (HPOCIDXX),
+    KEY IDX_HPOIIDXX (HPOIIDXX),
+    KEY IDX_HPOJIDXX (HPOJIDXX)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'CUSRES HEADER, IMPORT DECLARATION ITEM VS OTHER GOVERNMENT AUTHORITY';
