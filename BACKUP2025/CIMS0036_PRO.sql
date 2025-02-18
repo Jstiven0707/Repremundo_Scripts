@@ -3,8 +3,6 @@ CREATE TABLE `CIMS0036` (
   `GRANOMXX` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'NOMBRE DE LA GRAFICA',
   `GRACOMXX` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'NOMBRE DEL COMPONENTE',
   `GRAORDXX` smallint NOT NULL COMMENT 'ORDEN DE LA GRAFICA',
-  `MODIDXXX` int NOT NULL COMMENT 'ID del modulo',
-  `PROIDXXX` int NOT NULL COMMENT '	ID del proceso',
   `REGUSRXX` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Usuario Creacion del Registro',
   `REGFECXX` date NOT NULL COMMENT 'Fecha de Creacion del Registro',
   `REGHORXX` time NOT NULL COMMENT 'Hora de Creacion del Registro',
