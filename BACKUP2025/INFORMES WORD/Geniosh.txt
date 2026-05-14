@@ -85,8 +85,8 @@ nohup mongorestore \
   --username "mongogeniohist" \
   --password "M0ng0H1st25*" \
   --authenticationDatabase admin \
-  --db "LOGGESTOR2026_04_30" \
-  --dir "/home/ubuntu/mongosh/genio/dump_202604300/LOGGESTOR2026" \
+  --db "LOGGESTOR2026_05_14" \
+  --dir "/home/ubuntu/mongosh/genio/dump_20260514/LOGGESTOR2026" \
   --ssl \
   --sslCAFile "/home/ubuntu/mongosh/genio/us-east-1-bundle.pem" \
   --tlsInsecure \
@@ -118,7 +118,7 @@ mongorestore \
     --password '!+09PUp>09tj' \
     --authenticationDatabase admin \
     --nsFrom='LOGCIMA2026.*' \
-    --nsTo='LOGCIMA2026_01_08.*' \
+    --nsTo='LOGCIMA2026_05_14.*' \
     /home/ubuntu/mongosh/LOGCIMA_2026_01_08 \
     --ssl \
     --sslCAFile /home/ubuntu/mongosh/global-bundle.pem \
