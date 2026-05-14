@@ -1,0 +1,276 @@
+ssh -i /home/ubuntu/mongosh/genio/key-pair-GENIO.pem \
+  -o ServerAliveInterval=60 \
+  -o ServerAliveCountMax=3 \
+  -o ExitOnForwardFailure=yes \
+  -L 127.0.0.1:27018:docdb-mongo-genio-prod.cushqonehq7o.us-east-1.docdb.amazonaws.com:27017 \
+  ubuntu@35.173.89.42 -N -f
+
+
+abro tuneles 
+
+
+nc -z 127.0.0.1 27018 && echo "OCUPADO" || echo "LIBRE"
+
+
+
+mongosh "mongodb://127.0.0.1:27018/admin" \
+  --username cladmin \
+  --password 'C12345678c*' \
+  --tls \
+  --tlsCAFile /home/ubuntu/mongosh/genio/us-east-1-bundle.pem \
+  --tlsAllowInvalidHostnames
+
+
+mkdir -p /home/ubuntu/mongosh/genio/dump_$(date +%Y%m%d)
+
+mongodump \
+  --host 127.0.0.1 \
+  --port 27018 \
+  --username cladmin \
+  --password 'C12345678c*' \
+  --authenticationDatabase admin \
+  --db LOGGESTOR2026 \
+  --ssl \
+  --sslCAFile /home/ubuntu/mongosh/genio/us-east-1-bundle.pem \
+  --sslAllowInvalidHostnames \
+  --out /home/ubuntu/mongosh/genio/dump_$(date +%Y%m%d)
+
+
+
+
+
+ejecuto el dump 
+
+
+chmod +x /home/ubuntu/mongosh/genio/backup_genio.sh
+/home/ubuntu/mongosh/genio/backup_genio.sh
+ 
+
+
+
+
+
+------------------------------------------------------
+
+
+
+vamos al restore 
+abro tuneles 
+
+ssh -i /home/ubuntu/mongosh/genio/key-pair-GENIO.pem \
+  -L 127.0.0.1:27017:ocdb-mongo-genio-hist.cushqonehq7o.us-east-1.docdb.amazonaws.com:27017 \
+  -N -f ubuntu@35.173.89.42
+
+nc -z 127.0.0.1 27017 && echo "OCUPADO" || echo "LIBRE"
+
+verifico 
+
+ps aux | grep ssh | grep 27017
+
+pruebo conexion sh 
+
+mongosh --host 127.0.0.1 --port 27017 \
+  --username mongogeniohist \
+  --password 'M0ng0H1st25*' \
+  --authenticationDatabase admin \
+  --tls \
+  --tlsCAFile /home/ubuntu/mongosh/genio/us-east-1-bundle.pem \
+  --tlsAllowInvalidCertificates
+
+
+
+nohup mongorestore \
+  --host 127.0.0.1 \
+  --port 27017 \
+  --username "mongogeniohist" \
+  --password "M0ng0H1st25*" \
+  --authenticationDatabase admin \
+  --db "LOGGESTOR2026_04_30" \
+  --dir "/home/ubuntu/mongosh/genio/dump_202604300/LOGGESTOR2026" \
+  --ssl \
+  --sslCAFile "/home/ubuntu/mongosh/genio/us-east-1-bundle.pem" \
+  --tlsInsecure \
+  --numInsertionWorkersPerCollection=2 \
+  --maintainInsertionOrder \
+  --verbose \
+> "/home/ubuntu/mongosh/genio/restore_$(date +%F_%H-%M).log" 2>&1 &
+
+
+
+
+
+
+
+
+
+ssh -i /home/ubuntu/12345/llave/key-pair-cima2.pem \
+    -L 127.0.0.1:27017:docdb-mongo-cima-hist.cluster-ccvz0yxqws4u.us-west-2.docdb.amazonaws.com:27017 \
+    ubuntu@44.241.148.230 -N -f
+
+nc -z 127.0.0.1 27017 && echo "✅ Puerto 27017 OK" || echo "❌ Puerto 27017 NO responde"
+
+
+
+mongorestore \
+    --host 127.0.0.1 \
+    --port 27017 \
+    --username 'mongohist' \
+    --password '!+09PUp>09tj' \
+    --authenticationDatabase admin \
+    --nsFrom='LOGCIMA2026.*' \
+    --nsTo='LOGCIMA2026_01_08.*' \
+    /home/ubuntu/mongosh/LOGCIMA_2026_01_08 \
+    --ssl \
+    --sslCAFile /home/ubuntu/mongosh/global-bundle.pem \
+    --tlsInsecure \
+    --verbose
+
+
+
+
+
+/home/ubuntu/mongosh/genio/backup_genio.sh dump
+
+/home/ubuntu/mongosh/genio/backup_genio.sh restore
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+completo sh automatico
+
+#!/bin/bash
+set -euo pipefail
+
+# === CONFIGURACIÓN ===
+KEY_PATH="/home/ubuntu/mongosh/genio/key-pair-GENIO.pem"
+CA_FILE="/home/ubuntu/mongosh/genio/us-east-1-bundle.pem"
+BASE_DIR="/home/ubuntu/mongosh/genio"
+FECHA=$(date '+%Y_%m_%d')
+BAK_DIR="$BASE_DIR/dump_$FECHA"
+LOG_FILE="$BASE_DIR/backup_restore_$FECHA.log"
+
+# Credenciales PROD
+PROD_USER="cladmin"
+PROD_PASS='C12345678c*'
+PROD_PORT_LOCAL=27018
+PROD_HOST="docdb-mongo-genio-prod.cushqonehq7o.us-east-1.docdb.amazonaws.com"
+
+# Credenciales HIST
+HIST_USER="mongogeniohist"
+HIST_PASS="M0ng0H1st25*"
+HIST_PORT_LOCAL=27017
+HIST_HOST="ocdb-mongo-genio-hist.cushqonehq7o.us-east-1.docdb.amazonaws.com"
+
+# Base de datos destino histórico
+BASE_NAME="LOGGESTOR2026"
+FECHA_SUFFIX=$(date '+%m_%d')
+DB_HIST="${BASE_NAME}_${FECHA_SUFFIX}"
+
+# === FUNCIONES ===
+log() {
+    echo "$(date '+%F %T') - $1" | tee -a "$LOG_FILE"
+}
+
+cerrar_tuneles() {
+    log "🔒 Cerrando túneles SSH..."
+    pkill -f "$PROD_HOST" || true
+    pkill -f "$HIST_HOST" || true
+    sleep 2
+}
+
+abrir_tunel() {
+    local local_port=$1
+    local remote_host=$2
+    log "🔌 Abriendo túnel: 127.0.0.1:$local_port → $remote_host:27017"
+    ssh -i "$KEY_PATH" \
+        -o ServerAliveInterval=60 \
+        -o ServerAliveCountMax=3 \
+        -o ExitOnForwardFailure=yes \
+        -L 127.0.0.1:$local_port:$remote_host:27017 \
+        ubuntu@35.173.89.42 -N -f
+}
+
+verificar_puerto() {
+    local port=$1
+    nc -z 127.0.0.1 $port
+    if [ $? -ne 0 ]; then
+        log "❌ Puerto $port no responde. Abortando."
+        cerrar_tuneles
+        exit 1
+    fi
+}
+
+# === PROCESO ===
+START_TIME=$(date +%s)
+log "=== Iniciando Backup & Restore para $DB_HIST ==="
+
+mkdir -p "$BAK_DIR"
+
+# 1️⃣ Dump producción
+abrir_tunel $PROD_PORT_LOCAL $PROD_HOST
+sleep 2
+verificar_puerto $PROD_PORT_LOCAL
+
+log "📦 Ejecutando mongodump desde PROD..."
+mongodump \
+    --host 127.0.0.1 \
+    --port $PROD_PORT_LOCAL \
+    --username "$PROD_USER" \
+    --password "$PROD_PASS" \
+    --authenticationDatabase admin \
+    --db "$BASE_NAME" \
+    --out "$BAK_DIR" \
+    --ssl \
+    --sslCAFile "$CA_FILE" \
+    --tlsInsecure \
+    >> "$LOG_FILE" 2>&1
+
+# Detectar carpeta de dump
+DUMP_SUBDIR=$(find "$BAK_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+if [ -z "$DUMP_SUBDIR" ]; then
+    log "❌ No se encontró carpeta de dump dentro de $BAK_DIR."
+    cerrar_tuneles
+    exit 1
+fi
+log "📂 Carpeta de dump detectada: $DUMP_SUBDIR"
+
+# 2️⃣ Restore histórico
+abrir_tunel $HIST_PORT_LOCAL $HIST_HOST
+sleep 2
+verificar_puerto $HIST_PORT_LOCAL
+
+log "♻️ Restaurando hacia HIST con base destino $DB_HIST..."
+mongorestore \
+    --host 127.0.0.1 \
+    --port $HIST_PORT_LOCAL \
+    --username "$HIST_USER" \
+    --password "$HIST_PASS" \
+    --authenticationDatabase admin \
+    --db "$DB_HIST" \
+    "$DUMP_SUBDIR" \
+    --ssl \
+    --sslCAFile "$CA_FILE" \
+    --tlsInsecure \
+    >> "$LOG_FILE" 2>&1
+
+log "✅ Backup & Restore completado correctamente."
+cerrar_tuneles
+
+END_TIME=$(date +%s)
+ELAPSED=$((END_TIME - START_TIME))
+log "🕒 Tiempo total: ${ELAPSED}s"
+log "📄 Log completo: $LOG_FILE"

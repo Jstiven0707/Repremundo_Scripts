@@ -1,0 +1,153 @@
+🧩 Las 3 operaciones básicas
+
+Toda secuencia solo permite 3 cosas:
+
+1️⃣ Reemplazar (NO cambia la estructura)
+
+Ejemplo:
+
+[1][2][3][4][5]
+→
+[1][2][3][4][99]
+
+
+✔️ Tocas 1
+✔️ No afecta a nadie
+✔️ Es seguro
+
+👉 Esto es dato, no orden
+
+2️⃣ Insertar (ROMPE la secuencia si no mueves)
+
+Ejemplo:
+
+[1][2][3][4][5]
+Insertar X entre 3 y 4
+
+
+Si no mueves:
+
+[1][2][3][X][4][5] ❌
+
+
+Hay dos “4”, la secuencia muere.
+
+✔️ Solución:
+
+mueves todo lo de la derecha
+
+luego insertas
+
+3️⃣ Eliminar (deja un hueco)
+
+Ejemplo:
+
+[1][2][3][4][5]
+Eliminar 3
+
+
+Queda:
+
+[1][2][ ][4][5] ❌
+
+
+✔️ Solución:
+
+bajas todo lo de la derecha
+
+🔄 Regla universal
+
+Toda inserción o eliminación en el medio obliga a mover todo lo que esté a la derecha.
+
+No hay excepción.
+
+🚨 Error típico en bases de datos
+
+Muchos hacen:
+
+UPDATE tabla SET SECITEXX = 99 WHERE SECITEXX = 5;
+
+
+Eso rompe el significado del campo.
+
+Ahora tienes:
+
+1,2,3,4,99,6,7...
+
+
+¿99 es posición? ❌
+¿orden? ❌
+¿significa algo? ❌
+
+🧠 Diseño correcto en BD (esto es clave)
+
+Siempre separa:
+
+Tipo	Campo
+Identidad	ID
+Orden	POSICION
+Dato	VALOR
+
+Nunca mezcles.
+
+🧪 Ejemplo real (factura)
+ID   ITEM   PRODUCTO
+10   1      A
+11   2      B
+12   3      C
+
+
+Eliminar ITEM = 2:
+
+ID   ITEM   PRODUCTO
+10   1      A
+12   2      C
+
+
+👉 ITEM se recalcula, el ID no.
+
+🧠 Cuándo NO renumerar
+
+❌ Facturas legales
+❌ Documentos auditados
+❌ Secuencias externas
+❌ Logs históricos
+
+Ahí:
+
+se marca como eliminado
+
+NO se cierra el hueco
+
+🎯 Resumen mental (llévatelo)
+
+Reemplazar ≠ insertar
+
+Insertar/eliminar ≠ tocar uno solo
+
+Orden ≠ valor
+
+Secuencia = sistema, no campo
+
+Si quieres, en el siguiente mensaje:
+
+lo bajamos exactamente a SQL
+
+o lo conectamos con errores comunes en MySQL
+
+o vemos cómo diseñar bien una tabla secuencial
+
+Dime qué te sirve más 👍
+
+
+
+Reemplazar ≠ insertar
+
+Insertar/eliminar ≠ tocar uno solo
+
+Orden ≠ valor
+
+Secuencia = sistema, no campo
+
+
+>= me da la pisicion desde donde deseo inicar y + 1 meda el dexplazamiento

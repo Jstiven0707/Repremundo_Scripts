@@ -1,0 +1,106 @@
+UPDATE `CIPO0209` SET REGESTXX='ACTIVO'
+ 
+
+ALTER TABLE public.redc2025
+ALTER COLUMN regestxx TYPE estado_usuario
+USING regestxx::text::estado_usuario;
+
+REVOKE ALL ON DATABASE customs    FROM yolimaquevedo
+REVOKE ALL ON DATABASE customsdev FROM yolimaquevedo
+
+REVOKE ALL ON ALL TABLES    IN SCHEMA public FROM yolimaquevedo;
+REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM yolimaquevedo;
+REVOKE ALL ON SCHEMA public                  FROM yolimaquevedo;
+
+-- \c customsdev
+ALTER DEFAULT PRIVILEGES FOR ROLE jaircarodba IN SCHEMA public
+    REVOKE ALL ON TABLES FROM yolimaquevedo;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE jaircarodba IN SCHEMA public
+    REVOKE ALL ON SEQUENCES FROM yolimaquevedo;
+
+-- Acceso a la base
+GRANT CONNECT ON DATABASE customs    TO dev_team;
+GRANT CONNECT ON DATABASE customsdev TO dev_team;
+
+-- Acceso al schema
+GRANT USAGE, CREATE ON SCHEMA public TO dev_team;
+
+-- Tablas existentes
+GRANT ALL ON ALL TABLES    IN SCHEMA public TO dev_team;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO dev_team;
+
+-- Tablas futuras
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT ALL ON TABLES    TO dev_team;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT ALL ON SEQUENCES TO dev_team;
+
+
+
+SELECT rolname, rolsuper, rolcreaterole, rolcreatedb, rolcanlogin, rolinherit
+FROM pg_roles
+WHERE rolname = 'dev_team';
+
+
+ALTER TYPE estado_redc  OWNER TO dev_team;
+ALTER TYPE estado_documento OWNER TO dev_team;
+ALTER TYPE prioridad        OWNER TO dev_team;
+
+
+
+
+
+
+-- Sacar customsapi de dev_team
+REVOKE dev_team FROM customsapi;
+
+-- Darle solo lo necesario
+GRANT CONNECT ON DATABASE customs    TO customsapi;
+GRANT CONNECT ON DATABASE customsdev TO customsapi;
+GRANT USAGE   ON SCHEMA public       TO customsapi;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO customsapi;
+
+-- Tablas futuras
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO customsapi;
+
+
+
+
+COMMENT ON COLUMN public.redc2024.regusrxx
+    IS 'Usuario Creacion del Registro';
+
+COMMENT ON COLUMN public.redc2024.regfecxx
+    IS 'Fecha de Creacion del Registro';
+
+COMMENT ON COLUMN public.redc2024.reghorxx
+    IS 'Hora de Creacion del Registro';
+
+COMMENT ON COLUMN public.redc2024.regusrmx
+    IS 'Usuario de Modificacion';
+
+COMMENT ON COLUMN public.redc2024.regfecmx
+    IS 'Fecha de Modificacion del Registro';
+
+COMMENT ON COLUMN public.redc2024.reghormx
+    IS 'Hora de Modificacion del Registro';
+
+COMMENT ON COLUMN public.redc2024.regestxx
+    IS 'Estado del Registro';
+
+COMMENT ON COLUMN public.redc2024.regstamp
+    IS 'Modificado';
+
+	
+COMMENT ON COLUMN public.redc2024.redcdaex
+    IS 'Datos extraidos';
+
+
+
+
+CREATE OR REPLACE TRIGGER trg_redc2024_regstamp
+    BEFORE UPDATE 
+    ON public.redc2024
+    FOR EACH ROW
+    EXECUTE FUNCTION public.fn_update_regstamp();

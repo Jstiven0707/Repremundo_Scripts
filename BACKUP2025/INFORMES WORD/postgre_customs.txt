@@ -1,0 +1,954 @@
+-- =============================================================================
+-- MIGRACIÓN MySQL → PostgreSQL
+-- Bases de datos: CUSTOMS y CUSTOMSDEV
+-- Origen:  RDS MySQL 8.0 (rds-mysql-customs-prod)
+-- Destino: RDS PostgreSQL
+-- Generado: 2026-03-09
+-- Convenciones:
+--   · Todo en minúsculas (tablas, columnas, constraints, índices)
+--   · ENUMs de MySQL → tipo TEXT + CHECK CONSTRAINT
+--   · tinytext / longtext → TEXT
+--   · TIMESTAMP con zona horaria → TIMESTAMPTZ
+--   · AUTO_INCREMENT → GENERATED ALWAYS AS IDENTITY
+--   · LC_COLLATE / LC_CTYPE: en_US.UTF-8  (equivalente a utf8mb4_unicode_ci)
+--   · OWNER: postgres
+--   · Usuarios con SUPERUSER: diego.serrano, eider.rios, jair.caro,
+--                              sebastian.rojas, yolima.quevedo
+-- =============================================================================
+
+
+-- ---------------------------------------------------------------------------
+-- 0. CREAR BASES DE DATOS
+--    Ejecutar como superusuario (ej. postgres) FUERA de cualquier transacción.
+--    LC_COLLATE / LC_CTYPE en_US.UTF-8 garantiza orden correcto de tildes y ñ.
+--    TEMPLATE template0 es obligatorio cuando se cambia collation/ctype.
+-- ---------------------------------------------------------------------------
+
+CREATE DATABASE customs
+
+    WITH
+    OWNER      = postgres
+    ENCODING   = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE   = 'en_US.UTF-8'
+    TEMPLATE   = template0
+    IS_TEMPLATE = FALSE;
+
+CREATE DATABASE customsdev
+    WITH
+    OWNER      = postgres
+    ENCODING   = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE   = 'en_US.UTF-8'
+    TEMPLATE   = template0
+    IS_TEMPLATE = FALSE;
+
+
+-- ---------------------------------------------------------------------------
+-- 1. USUARIOS CON PRIVILEGIOS COMPLETOS (SUPERUSER)
+--    Ejecutar conectado al servidor (no a una DB específica).
+--    Reemplazar 'cambiar_password_seguro' por las contraseñas reales.
+-- ---------------------------------------------------------------------------
+
+CREATE USER "diego.serrano"    WITH SUPERUSER LOGIN PASSWORD 'cambiar_password_seguro';
+CREATE USER "eider.rios"       WITH SUPERUSER LOGIN PASSWORD 'cambiar_password_seguro';
+CREATE USER "jair.caro"        WITH SUPERUSER LOGIN PASSWORD 'cambiar_password_seguro';
+CREATE USER "sebastian.rojas"  WITH SUPERUSER LOGIN PASSWORD 'cambiar_password_seguro';
+CREATE USER "yolima.quevedo"   WITH SUPERUSER LOGIN PASSWORD 'cambiar_password_seguro';
+
+
+-- =============================================================================
+-- A PARTIR DE AQUÍ: conectarse a la base 'customs'  (\c customs)
+--                   y luego repetir el bloque de tablas en 'customsdev'
+-- =============================================================================
+
+
+-- ---------------------------------------------------------------------------
+-- 2. SCHEMA principal
+-- ---------------------------------------------------------------------------
+
+-- Usamos el schema public (por defecto). Si se prefiere un schema dedicado:
+-- CREATE SCHEMA customs AUTHORIZATION postgres;
+-- SET search_path = customs;
+
+
+-- ---------------------------------------------------------------------------
+-- 3. TABLAS
+-- ---------------------------------------------------------------------------
+
+-- ············································································
+-- cuss0001 — USUARIOS
+-- ············································································
+CREATE TYPE estado_usuario AS ENUM (
+    'ACTIVO',
+    'INACTIVO'
+);
+
+CREATE TABLE cuss0001 (
+    regusrxx  VARCHAR(20)       NOT NULL,
+    regfecxx  DATE              NOT NULL,
+    reghorxx  TIME              NOT NULL,
+    regusrmx  VARCHAR(20)       NOT NULL,
+    regfecmx  DATE              NOT NULL,
+    reghormx  TIME              NOT NULL,
+    regestxx  estado_usuario    NOT NULL,
+    regstamp  TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
+    usridxxx  VARCHAR(30)       NOT NULL,
+    usrnomxx  TEXT              NOT NULL,
+    usrhashx  TEXT              NOT NULL,
+    empnitxx  VARCHAR(30)       NOT NULL,
+   
+
+    CONSTRAINT pk_cuss0001 PRIMARY KEY (usridxxx)
+);
+
+COMMENT ON TABLE  cuss0001        IS 'USUARIOS';
+COMMENT ON COLUMN cuss0001.usridxxx IS 'ID del usuario';
+COMMENT ON COLUMN cuss0001.usrnomxx IS 'Nombre del usuario';
+COMMENT ON COLUMN cuss0001.usrhashx IS 'Hash de contraseña del usuario';
+COMMENT ON COLUMN cuss0001.empnitxx IS 'ID de la empresa (cuss0002)';
+COMMENT ON COLUMN cuss0001.regusrxx IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0001.regfecxx IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0001.reghorxx IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0001.regusrmx IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0001.regfecmx IS 'Fecha de Modificacion';
+COMMENT ON COLUMN cuss0001.reghormx IS 'Hora de Modificacion';
+COMMENT ON COLUMN cuss0001.regestxx IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0001.regstamp IS 'Timestamp';
+
+
+-- ············································································
+-- cuss0002 — EMPRESAS
+-- ············································································
+CREATE TABLE cuss0002_new(
+    regusrxx  VARCHAR(20)       NOT NULL,
+    regfecxx  DATE              NOT NULL,
+    reghorxx  TIME              NOT NULL,
+    regusrmx  VARCHAR(20)       NOT NULL,
+    regfecmx  DATE              NOT NULL,
+    reghormx  TIME              NOT NULL,
+    regestxx  estado_usuario    NOT NULL,
+    regstamp  TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
+    empnitxx  VARCHAR(30)       NOT NULL,
+    empnomxx  TEXT              NOT NULL,
+
+
+    CONSTRAINT pk_cuss0002      PRIMARY KEY (empnitxx)
+    
+);
+
+COMMENT ON TABLE  cuss0002_new           IS 'Empresas';
+COMMENT ON COLUMN cuss0002_new.empnitxx  IS 'ID de la empresa';
+COMMENT ON COLUMN cuss0002_new.empnomxx  IS 'Nombre de la empresa';
+COMMENT ON COLUMN cuss0002_new.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0002_new.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0002_new.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0002_new.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0002_new.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002_new.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002_new.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0002_new.regstamp  IS 'Modificado';
+
+
+-- ············································································
+-- cuss0003 — TIPOS DE DOCUMENTOS
+-- ············································································
+CREATE TABLE cuss0003 (
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario    NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    doctipxx  INTEGER      NOT NULL,
+    docdesxx  TEXT         NOT NULL,
+    jerarxxx cus3jerarxxx NOT NULL
+    
+
+    CONSTRAINT pk_cuss0003      PRIMARY KEY (doctipxx),
+
+);
+
+COMMENT ON TABLE  cuss0003           IS 'Tipos de documentos';
+COMMENT ON COLUMN cuss0003.doctipxx  IS 'ID del tipo de documento';
+COMMENT ON COLUMN cuss0003.docdesxx  IS 'Descripción del tipo de documento';
+COMMENT ON COLUMN cuss0003.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0003.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0003.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0003.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0003.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0003.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0003.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0003.regstamp  IS 'Modificado';
+
+
+
+-- ············································································
+-- cuss0004 — SERVICIOS
+-- ············································································
+CREATE TABLE cuss0004 (
+regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario    NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    seridxxx  INTEGER      NOT NULL,
+    serdesxx  TEXT         NOT NULL,
+    
+
+    CONSTRAINT pk_cusss0004     PRIMARY KEY (seridxxx),
+    
+);
+
+COMMENT ON TABLE  cuss0004           IS 'Servicios';
+COMMENT ON COLUMN cuss0004.seridxxx  IS 'ID del servicio';
+COMMENT ON COLUMN cuss0004.serdesxx  IS 'Descripción del servicio';
+COMMENT ON COLUMN cuss0004.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0004.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0004.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0004.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0004.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0004.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0004.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0004.regstamp  IS 'Modificado';
+
+
+-- ············································································
+-- cuss0005 — EMPRESA × TIPO_DOC × SERVICIO
+-- ············································································
+CREATE TABLE cuss0005 (
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario    NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    empnitxx  VARCHAR(30)  NOT NULL,
+    doctipxx  INTEGER      NOT NULL,
+    seridxxx  INTEGER      NOT NULL,
+
+
+    CONSTRAINT pk_cuss0005   PRIMARY KEY (empnitxx, doctipxx, seridxxx)
+    
+    
+);
+
+CREATE INDEX ix_cuss0005_empnitxx ON cuss0005 (empnitxx);
+CREATE INDEX ix_cuss0005_doctipxx ON cuss0005 (doctipxx);
+CREATE INDEX ix_cuss0005_seridxxx ON cuss0005 (seridxxx);
+
+COMMENT ON TABLE  cuss0005           IS 'Empresa y tipo de documento vs acciones';
+COMMENT ON COLUMN cuss0005.empnitxx  IS 'ID de la empresa';
+COMMENT ON COLUMN cuss0005.doctipxx  IS 'ID del tipo de documento (cuss0003)';
+COMMENT ON COLUMN cuss0005.seridxxx  IS 'ID del servicio (cuss0004)';
+COMMENT ON COLUMN cuss0005.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0005.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0005.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0005.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0005.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0005.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0005.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0005.regstamp  IS 'Modificado';
+
+
+-- ············································································
+-- cuss0006 — EMPRESA × COLAS DEL SISTEMA
+-- ············································································
+CREATE TABLE cuss0006 (
+regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    queidxxx  BIGINT       NOT NULL,
+    empnitxx  VARCHAR(30)  NOT NULL,
+    quepaylo  TEXT         NOT NULL,
+    queprixx  prioridad_cola         NOT NULL,
+    
+
+    CONSTRAINT pk_cuss0006          PRIMARY KEY (queidxxx, empnitxx),
+   
+);
+
+CREATE INDEX ix_cuss0006_empnitxx ON cuss0006 (empnitxx);
+
+COMMENT ON TABLE  cuss0006           IS 'Empresa vs colas del sistema';
+COMMENT ON COLUMN cuss0006.queidxxx  IS 'ID de la cola';
+COMMENT ON COLUMN cuss0006.empnitxx  IS 'ID de la empresa (cuss0002)';
+COMMENT ON COLUMN cuss0006.quepaylo  IS 'Payload de la cola';
+COMMENT ON COLUMN cuss0006.queprixx  IS 'Prioridad de la cola';
+COMMENT ON COLUMN cuss0006.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0006.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0006.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0006.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0006.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0006.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0006.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0006.regstamp  IS 'Modificado';
+
+
+-- ············································································
+-- cuss0007 — EMPRESA × TAREAS FALLIDAS
+-- ············································································
+CREATE TABLE cuss0007 (
+
+   regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    queidxxx  BIGINT       NOT NULL,
+    empnitxx  VARCHAR(30)  NOT NULL,
+    quepaylo  TEXT         NOT NULL,
+    queerrxx  TEXT         NOT NULL,
+   
+
+    CONSTRAINT pk_cuss0007          PRIMARY KEY (queidxxx, empnitxx)
+ 
+);
+
+CREATE INDEX idx_cuss0007_empnitxx ON cuss0007 (empnitxx);
+
+COMMENT ON TABLE  cuss0007           IS 'Empresas vs tareas fallidas';
+COMMENT ON COLUMN cuss0007.queidxxx  IS 'ID de la cola';
+COMMENT ON COLUMN cuss0007.empnitxx  IS 'ID de la empresa (cuss0002)';
+COMMENT ON COLUMN cuss0007.quepaylo  IS 'Payload de la cola';
+COMMENT ON COLUMN cuss0007.queerrxx  IS 'Error de la cola';
+COMMENT ON COLUMN cuss0007.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0007.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0007.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0007.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0007.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0007.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0007.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0007.regstamp  IS 'Modificado';
+
+
+
+-- ············································································
+-- cuss0525 — CRONES DEL SISTEMA
+-- AUTO_INCREMENT → GENERATED ALWAYS AS IDENTITY (estándar SQL:2003, recomendado en PG 10+)
+-- ············································································
+CREATE TABLE cuss0525 (
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    cronidxx  INTEGER      GENERATED ALWAYS AS IDENTITY NOT NULL,
+    cronnomx  TEXT         NOT NULL,
+    cronacci  TEXT         NOT NULL,
+    cronminx  TEXT         NOT NULL,
+    cronhorx  TEXT         NOT NULL,
+    crondiax  TEXT         NOT NULL,
+    cronmesx  TEXT         NOT NULL,
+    cronsemx  TEXT         NOT NULL,
+    cronexep  TEXT         NOT NULL,
+    crofecue  TIMESTAMP    NOT NULL,
+    
+
+    CONSTRAINT pk_cuss0525      PRIMARY KEY (cronidxx)
+  
+);
+
+COMMENT ON TABLE  cuss0525           IS 'Crones del sistema';
+COMMENT ON COLUMN cuss0525.cronidxx  IS 'ID autoincremental del cron';
+COMMENT ON COLUMN cuss0525.cronnomx  IS 'Nombre del cron';
+COMMENT ON COLUMN cuss0525.cronacci  IS 'Comando a ejecutar';
+COMMENT ON COLUMN cuss0525.cronminx  IS 'Expresión de minutos';
+COMMENT ON COLUMN cuss0525.cronhorx  IS 'Expresión de horas';
+COMMENT ON COLUMN cuss0525.crondiax  IS 'Expresión del día del mes';
+COMMENT ON COLUMN cuss0525.cronmesx  IS 'Expresión mes';
+COMMENT ON COLUMN cuss0525.cronsemx  IS 'Expresión día de la semana';
+COMMENT ON COLUMN cuss0525.cronexep  IS 'En caso de fallo o excepción';
+COMMENT ON COLUMN cuss0525.crofecue  IS 'Fecha y hora de última ejecución';
+COMMENT ON COLUMN cuss0525.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0525.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0525.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0525.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0525.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0525.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0525.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0525.regstamp  IS 'Modificado';
+
+
+
+-- ············································································
+-- reda2024 — DOCUMENTO × SERVICIO (año 2024)
+-- ············································································
+CREATE TABLE reda2024 (
+
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    redcidxx  BIGINT   NOT NULL,
+    seridxxx  INTEGER  NOT NULL,
+    
+
+    CONSTRAINT pk_reda2024  PRIMARY KEY (redcidxx, seridxxx)
+);
+
+CREATE INDEX ix_reda2024_redcidxx ON reda2024 (redcidxx);
+CREATE INDEX ix_reda2024_seridxxx ON reda2024 (seridxxx);
+
+COMMENT ON TABLE  reda2024           IS 'Documento vs Servicio';
+COMMENT ON COLUMN reda2024.redcidxx  IS 'ID del documento recepcionado';
+COMMENT ON COLUMN reda2024.seridxxx  IS 'ID del servicio (cuss0004)';
+COMMENT ON COLUMN reda2024.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN reda2024.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN reda2024.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN reda2024.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN reda2024.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN reda2024.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN reda2024.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN reda2024.regstamp  IS 'Modificado';
+
+
+
+-- ············································································
+-- reda2025 — DOCUMENTO × SERVICIO (año 2025)
+-- ············································································
+CREATE TABLE reda2025 (
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  TEXT         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    redcidxx  BIGINT   NOT NULL,
+    seridxxx  INTEGER  NOT NULL,
+    
+
+    CONSTRAINT pk_reda2025           PRIMARY KEY (redcidxx, seridxxx),
+    CONSTRAINT fk_reda2025_servicio  FOREIGN KEY (seridxxx)  REFERENCES cuss0004 (seridxxx),
+    CONSTRAINT ck_reda2025_est       CHECK (regestxx IN ('ACTIVO','INACTIVO'))
+);
+
+CREATE INDEX ix_reda2025_redcidxx ON reda2025 (redcidxx);
+CREATE INDEX ix_reda2025_seridxxx ON reda2025 (seridxxx);
+
+COMMENT ON TABLE  reda2025           IS 'Documento vs Servicio (2025)';
+COMMENT ON COLUMN reda2025.redcidxx  IS 'ID del documento recepcionado';
+COMMENT ON COLUMN reda2025.seridxxx  IS 'ID del servicio (cuss0004)';
+COMMENT ON COLUMN reda2025.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN reda2025.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN reda2025.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN reda2025.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN reda2025.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN reda2025.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN reda2025.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN reda2025.regstamp  IS 'Modificado';
+
+
+
+-- ············································································
+-- reda2026 — DOCUMENTO × SERVICIO (año 2026)
+-- ············································································
+CREATE TABLE reda2026 (
+    redcidxx  BIGINT   NOT NULL,
+    seridxxx  INTEGER  NOT NULL,
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  TEXT         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT pk_reda2026           PRIMARY KEY (redcidxx, seridxxx),
+    CONSTRAINT fk_reda2026_servicio  FOREIGN KEY (seridxxx)  REFERENCES cuss0004 (seridxxx),
+    CONSTRAINT ck_reda2026_est       CHECK (regestxx IN ('ACTIVO','INACTIVO'))
+);
+
+CREATE INDEX ix_reda2026_redcidxx ON reda2026 (redcidxx);
+CREATE INDEX ix_reda2026_seridxxx ON reda2026 (seridxxx);
+
+COMMENT ON TABLE  reda2026           IS 'Documento vs Servicio (2026)';
+COMMENT ON COLUMN reda2026.redcidxx  IS 'ID del documento recepcionado';
+COMMENT ON COLUMN reda2026.seridxxx  IS 'ID del servicio (cuss0004)';
+COMMENT ON COLUMN cuss0002.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0002.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0002.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0002.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0002.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0002.regstamp  IS 'Modificado';
+
+
+
+-- ············································································
+-- redc2024 — RECEPCIÓN DE DOCUMENTOS (año 2024)
+-- ············································································
+CREATE TABLE redc2026_new (
+regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  estado_usuario         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    redcidxx  BIGINT       NOT NULL,
+    redcpath  TEXT         NOT NULL,
+    empnitxx  VARCHAR(20)  NOT NULL,
+    cliidxxx  VARCHAR(20)  NOT NULL,
+    doctipxx  INTEGER      NOT NULL,
+    redcdesx  TEXT         NOT NULL,
+    redcmenx  TEXT         NOT NULL,
+    idclient  VARCHAR(50)  NOT NULL,
+    prioridx  prioridad     NOT NULL,
+    canpagxx  INTEGER      NOT NULL,
+    redcdaex  jsonb        NOT NULL,
+    redcrefx  varchar(100) not null,
+    redcidpa  bigint     not null,
+    
+CONSTRAINT pk_redc2026n    PRIMARY KEY (redcidxx)
+  
+);
+
+CREATE INDEX ix_redc2026_doctipxx ON redc2026 (doctipxx);
+
+COMMENT ON TABLE  redc2026_new            IS 'Recepcion de documentos (2024)';
+COMMENT ON COLUMN redc2026_new.redcidxx  IS 'ID del documento recepcionado';
+COMMENT ON COLUMN redc2026_new.redcpath  IS 'Path del documento';
+COMMENT ON COLUMN redc2026_new.empnitxx  IS 'ID de la empresa';
+COMMENT ON COLUMN redc2026_new.doctipxx  IS 'ID del tipo de documento (cuss0003)';
+COMMENT ON COLUMN redc2026_new.redcdesx  IS 'Path del documento desmaterializado';
+COMMENT ON COLUMN redc2026_new.redcmenx  IS 'Mensajes del sistema';
+COMMENT ON COLUMN redc2026_new.idclient  IS 'Identificador del cliente';
+COMMENT ON COLUMN redc2026_new.prioridx  IS 'Bandera que indica la prioridad';
+COMMENT ON COLUMN redc2026_new.canpagxx  IS 'Cantidad de páginas';
+COMMENT ON COLUMN redc2026_new.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN redc2026_new.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN redc2026_new.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN redc2026_new.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN redc2026_new.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN redc2026_new.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN redc2026_new.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN redc2026_new.regstamp  IS 'Modificado';
+;
+
+
+-- ············································································
+-- redc2025 — RECEPCIÓN DE DOCUMENTOS (año 2025)
+-- ············································································
+CREATE TABLE redc2025 (
+    redcidxx  BIGINT       NOT NULL,
+    redcpath  TEXT         NOT NULL,
+    empnitxx  VARCHAR(20)  NOT NULL,
+    doctipxx  INTEGER      NOT NULL,
+    redcdesx  TEXT         NOT NULL,
+    redcmenx  TEXT         NOT NULL,
+    idclient  VARCHAR(50)  NOT NULL,
+    prioridx  TEXT         NOT NULL,
+    canpagxx  INTEGER      NOT NULL,
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  TEXT         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT pk_redc2025           PRIMARY KEY (redcidxx),
+    CONSTRAINT fk_redc2025_doctip    FOREIGN KEY (doctipxx) REFERENCES cuss0003 (doctipxx),
+    CONSTRAINT ck_redc2025_pri       CHECK (prioridx IN ('HIGH','DEFAULT','')),
+    CONSTRAINT ck_redc2025_est       CHECK (regestxx IN ('ACTIVO','INACTIVO','RECIBIDO','EN PROCESO','ERROR','PREFIRMADO'))
+);
+
+CREATE INDEX ix_redc2025_doctipxx ON redc2025 (doctipxx);
+
+COMMENT ON TABLE  redc2025           IS 'Recepcion de documentos (2025)';
+COMMENT ON COLUMN redc2025.redcidxx  IS 'ID del documento recepcionado';
+COMMENT ON COLUMN redc2025.redcpath  IS 'Path del documento';
+COMMENT ON COLUMN redc2025.empnitxx  IS 'ID de la empresa';
+COMMENT ON COLUMN redc2025.doctipxx  IS 'ID del tipo de documento (cuss0003)';
+COMMENT ON COLUMN redc2025.redcdesx  IS 'Path del documento desmaterializado';
+COMMENT ON COLUMN redc2025.redcmenx  IS 'Mensajes del sistema';
+COMMENT ON COLUMN redc2025.idclient  IS 'Identificador del cliente';
+COMMENT ON COLUMN redc2025.prioridx  IS 'Bandera que indica la prioridad';
+COMMENT ON COLUMN redc2025.canpagxx  IS 'Cantidad de páginas';
+COMMENT ON COLUMN cuss0002.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0002.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0002.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0002.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0002.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0002.regstamp  IS 'Modificado';
+
+
+-- ············································································
+-- redc2026 — RECEPCIÓN DE DOCUMENTOS (año 2026)
+-- ············································································
+CREATE TABLE redc2026 (
+    redcidxx  BIGINT       NOT NULL,
+    redcpath  TEXT         NOT NULL,
+    empnitxx  VARCHAR(20)  NOT NULL,
+    doctipxx  INTEGER      NOT NULL,
+    redcdesx  TEXT         NOT NULL,
+    redcmenx  TEXT         NOT NULL,
+    idclient  VARCHAR(50)  NOT NULL,
+    prioridx  TEXT         NOT NULL,
+    canpagxx  INTEGER      NOT NULL,
+    regusrxx  VARCHAR(20)  NOT NULL,
+    regfecxx  DATE         NOT NULL,
+    reghorxx  TIME         NOT NULL,
+    regusrmx  VARCHAR(20)  NOT NULL,
+    regfecmx  DATE         NOT NULL,
+    reghormx  TIME         NOT NULL,
+    regestxx  TEXT         NOT NULL,
+    regstamp  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT pk_redc2026           PRIMARY KEY (redcidxx),
+    CONSTRAINT fk_redc2026_doctip    FOREIGN KEY (doctipxx) REFERENCES cuss0003 (doctipxx),
+    CONSTRAINT ck_redc2026_pri       CHECK (prioridx IN ('HIGH','DEFAULT','')),
+    CONSTRAINT ck_redc2026_est       CHECK (regestxx IN ('ACTIVO','INACTIVO','RECIBIDO','EN PROCESO','ERROR','PREFIRMADO'))
+);
+
+CREATE INDEX ix_redc2026_doctipxx ON redc2026 (doctipxx);
+
+COMMENT ON TABLE  redc2026           IS 'Recepcion de documentos (2026)';
+COMMENT ON COLUMN redc2026.redcidxx  IS 'ID del documento recepcionado';
+COMMENT ON COLUMN redc2026.redcpath  IS 'Path del documento';
+COMMENT ON COLUMN redc2026.empnitxx  IS 'ID de la empresa';
+COMMENT ON COLUMN redc2026.doctipxx  IS 'ID del tipo de documento (cuss0003)';
+COMMENT ON COLUMN redc2026.redcdesx  IS 'Path del documento desmaterializado';
+COMMENT ON COLUMN redc2026.redcmenx  IS 'Mensajes del sistema';
+COMMENT ON COLUMN redc2026.idclient  IS 'Identificador del cliente';
+COMMENT ON COLUMN redc2026.prioridx  IS 'Bandera que indica la prioridad';
+COMMENT ON COLUMN redc2026.canpagxx  IS 'Cantidad de páginas';
+COMMENT ON COLUMN cuss0002.regusrxx  IS 'Usuario Creacion del Registro';
+COMMENT ON COLUMN cuss0002.regfecxx  IS 'Fecha de Creacion del Registro';
+COMMENT ON COLUMN cuss0002.reghorxx  IS 'Hora de Creacion del Registro';
+COMMENT ON COLUMN cuss0002.regusrmx  IS 'Usuario de Modificacion';
+COMMENT ON COLUMN cuss0002.regfecmx  IS 'Fecha de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002.reghormx  IS 'Hora de Modificacion del Registro';
+COMMENT ON COLUMN cuss0002.regestxx  IS 'Estado del Registro';
+COMMENT ON COLUMN cuss0002.regstamp  IS 'Modificado';
+
+
+
+-- ---------------------------------------------------------------------------
+-- 4. OWNERSHIP DE TABLAS (dejar todo bajo postgres)
+-- ---------------------------------------------------------------------------
+ALTER TABLE cuss0001 OWNER TO postgres;
+ALTER TABLE cuss0002 OWNER TO postgres;
+ALTER TABLE cuss0003 OWNER TO postgres;
+ALTER TABLE cuss0004 OWNER TO postgres;
+ALTER TABLE cuss0005 OWNER TO postgres;
+ALTER TABLE cuss0006 OWNER TO postgres;
+ALTER TABLE cuss0007 OWNER TO postgres;
+ALTER TABLE cuss0525 OWNER TO postgres;
+ALTER TABLE reda2024 OWNER TO postgres;
+ALTER TABLE reda2025 OWNER TO postgres;
+ALTER TABLE reda2026 OWNER TO postgres;
+ALTER TABLE redc2024 OWNER TO postgres;
+ALTER TABLE redc2025 OWNER TO postgres;
+ALTER TABLE redc2026 OWNER TO postgres;
+
+
+-- ---------------------------------------------------------------------------
+-- 5. PRIVILEGIOS SOBRE EL SCHEMA PUBLIC Y LAS TABLAS
+--    Los 5 usuarios ya son SUPERUSER, así que tienen acceso total.
+--    De todas formas se dejan explícitos los GRANT para que quede documentado
+--    y para cuando se replique en CUSTOMSDEV.
+-- ---------------------------------------------------------------------------
+GRANT ALL PRIVILEGES ON DATABASE customs TO "diego.serrano";
+GRANT ALL PRIVILEGES ON DATABASE customs TO "eider.rios";
+GRANT ALL PRIVILEGES ON DATABASE customs TO "jair.caro";
+GRANT ALL PRIVILEGES ON DATABASE customs TO "sebastian.rojas";
+GRANT ALL PRIVILEGES ON DATABASE customs TO "yolima.quevedo";
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "diego.serrano";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "eider.rios";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "jair.caro";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "sebastian.rojas";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "yolima.quevedo";
+
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "diego.serrano";
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "eider.rios";
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "jair.caro";
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "sebastian.rojas";
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "yolima.quevedo";
+
+-- DEFAULT PRIVILEGES: garantiza que objetos futuros también queden cubiertos
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT ALL ON TABLES    TO "diego.serrano", "eider.rios", "jair.caro", "sebastian.rojas", "yolima.quevedo";
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT ALL ON SEQUENCES TO "diego.serrano", "eider.rios", "jair.caro", "sebastian.rojas", "yolima.quevedo";
+
+
+-- =============================================================================
+-- NOTAS DE MIGRACIÓN
+-- =============================================================================
+--
+-- 1. ENUM → TEXT + CHECK
+--    MySQL ENUM se reemplazó por TEXT con CHECK CONSTRAINT.
+--    Valores permitidos idénticos a los originales (respetan mayúsculas
+--    porque los datos ya vienen así desde la aplicación).
+--
+-- 2. tinytext / longtext → TEXT
+--    PostgreSQL no distingue tamaños de TEXT; el almacenamiento es TOAST
+--    automático. Sin pérdida de funcionalidad.
+--
+-- 3. TIMESTAMP → TIMESTAMPTZ
+--    Se usa TIMESTAMPTZ (con zona horaria) para regstamp.
+--    DEFAULT NOW() equivale al DEFAULT CURRENT_TIMESTAMP ON UPDATE ... de MySQL.
+--    El "ON UPDATE" no existe en PostgreSQL; si se necesita actualización
+--    automática usar un trigger:
+--
+--      CREATE OR REPLACE FUNCTION fn_set_regstamp()
+--      RETURNS TRIGGER LANGUAGE plpgsql AS $$
+--      BEGIN NEW.regstamp = NOW(); RETURN NEW; END; $$;
+--
+--      CREATE TRIGGER tg_<tabla>_regstamp
+--      BEFORE UPDATE ON <tabla>
+--      FOR EACH ROW EXECUTE FUNCTION fn_set_regstamp();
+--
+-- 4. AUTO_INCREMENT → GENERATED ALWAYS AS IDENTITY
+--    Solo aplica a cuss0525.cronidxx.
+--
+-- 5. COLLATION
+--    LC_COLLATE = 'en_US.UTF-8' maneja correctamente tildes y ñ para
+--    comparaciones case-insensitive. Si se requiere collation español estricto,
+--    usar 'es_CO.UTF-8' (requiere que el SO lo tenga instalado en el RDS).
+--
+-- 6. ORDEN DE EJECUCIÓN RECOMENDADO
+--    a) Crear usuarios         (sección 1, conectado al servidor)
+--    b) Crear bases de datos   (sección 0, conectado al servidor)
+--    c) \c customs
+--    d) Ejecutar secciones 2-5
+--    e) \c customsdev
+--    f) Ejecutar secciones 2-5 nuevamente (mismas tablas, mismos privilegios)
+--
+-- =============================================================================
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION fn_update_regstamp()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    NEW.regstamp = NOW();
+    RETURN NEW;
+END;
+$$;
+
+
+CREATE TRIGGER trg_cuss0001_regstamp
+BEFORE UPDATE ON customs.cuss0001
+FOR EACH ROW
+EXECUTE FUNCTION fn_update_regstamp();
+
+
+
+ CREATE TYPE estado_usuario AS ENUM (
+    'ACTIVO',
+    'INACTIVO'
+);
+
+
+CREATE TYPE prioridad_cola AS (
+     '',
+    'HIGH',
+    'DEFAULT'
+);
+
+
+CREATE TYPE prioridad AS (
+     '',
+    'HIGH',
+    'DEFAULT'
+);
+
+
+SELECT
+    cols.column_name,
+    (
+        SELECT pgd.description
+        FROM pg_description pgd
+        JOIN pg_class pc ON pc.oid = pgd.objoid
+        WHERE pc.relname = 'cuss0001'
+        AND pgd.objsubid = cols.ordinal_position
+    ) AS comentario
+FROM information_schema.columns cols
+WHERE cols.table_name = 'cuss0001'
+ORDER BY cols.ordinal_position;
+
+
+
+CREATE TYPE cus3_jerarxxx AS (
+     '',
+    'PADRE',
+    'HIJO'
+);
+
+
+
+
+
+
+
+INSERT INTO public.cuss0001 VALUES 
+('10000', '2026-01-29', '16:42:13',
+ '10000', '2026-01-29', '16:42:13',
+ 'ACTIVO', '2026-01-30 02:42:13+00',
+ '1016036869', 'SEBASTIAN ROJAS',
+ '$2b$12$lSA9wxq0VqvsYNxbaYCYx.vW7SlAp/AXDw5W1oCxETxEiiotw/rZi',
+ '800251957');
+
+INSERT INTO public.cuss0001 VALUES 
+('10000', '2025-12-15', '16:17:16',
+ '10000', '2025-12-15', '16:17:16',
+ 'ACTIVO', '2025-12-15 21:17:16+00',
+ '10305563345', 'EIDER RIOS',
+ '$2b$12$DTnr2K87Xex8pXjS3u01MOkJb86lnAGnRfwx6raouDSe0MqJNYQqa',
+ '800251957');
+
+INSERT INTO public.cuss0001 VALUES 
+('10000', '2026-03-24', '17:14:28.434686',
+ '10000', '2026-03-24', '17:14:28.434691',
+ 'ACTIVO', '2026-03-24 22:14:27.931131+00',
+ '10002', 'CUSTOMS WHATSAPP',
+ '$2b$12$aOLcTdkHyHXs5HpW/Qm9s.BcN04CAy9WhwdRliPkukJv9KoYD0MAW',
+ '800251957');
+
+INSERT INTO public.cuss0001 VALUES 
+('10000', '2026-03-25', '11:58:56.051185',
+ '10000', '2026-03-25', '11:58:56.05119',
+ 'ACTIVO', '2026-03-25 16:58:55.540421+00',
+ '100001', 'CIMA API',
+ '$2b$12$fOX9ExA/hynhJPHosCGE/eUcqm2brLWlM3Q1ak1kgujCGZDDPxbMG',
+ '800251957');
+
+
+
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2025-11-10 19:36:29',
+ 100, 'DOCUMENTO SOPORTE DE VALOR', '');
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2025-11-19 20:37:57',
+ 101, 'DOCUMENTO DE TRANSPORTE MARITIMO', '');
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2025-11-19 20:37:57',
+ 102, 'DOCUMENTO DE TRANSPORTE AEREO', '');
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2026-03-23 15:27:58.666703',
+ 103, 'DEX', NULL);
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2026-03-23 15:28:41.939369',
+ 104, 'CERTIFICADO DE ORIGEN', '');
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2026-04-06 19:36:21.736096',
+ 105, 'PACKING LIST', NULL);
+
+INSERT INTO public.cuss0003 VALUES 
+('1016036869', '2025-11-10', '08:00:00',
+ '1016036869', '2025-11-10', '00:00:00',
+ 'ACTIVO', '2026-04-06 19:36:56.488428',
+ 106, 'CUENTA FLETES', '');
+
+
+
+
+INSERT INTO redc2026_new (
+    regusrxx, regfecxx, reghorxx, regusrmx, regfecmx, reghormx,
+    regestxx, regstamp, redcidxx, redcpath, empnitxx, cliidxxx,
+    doctipxx, redcdesx, redcmenx, idclient, prioridx, canpagxx,
+    redcdaex, redcrefx, redcidpa
+)
+SELECT
+    regusrxx,
+    regfecxx,
+    reghorxx,
+    regusrmx,
+    regfecmx,
+    reghormx,
+    regestxx::TEXT::estado_documento,
+    regstamp,
+    redcidxx,
+    redcpath,
+    empnitxx,
+    COALESCE(cliidxxx, ''),
+    doctipxx,
+    redcdesx,
+    redcmenx,
+    idclient,
+    prioridx,
+    canpagxx,
+    COALESCE(redcdaex, '{}'::jsonb),
+    redcrefx,
+    redcidpa
+FROM redc2026;
+
+
+
+
+
+
+
+
+
+SELECT 
+  grantee,
+  table_name,
+  string_agg(privilege_type, ', ') AS permisos
+FROM information_schema.role_table_grants
+WHERE grantee IN (
+  'dev_team',
+  'sebastianrojas',
+  'yolimaquevedo',
+  'jaircarodba',
+  'customsapi'
+)
+GROUP BY grantee, table_name
+ORDER BY table_name, grantee;
