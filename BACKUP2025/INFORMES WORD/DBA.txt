@@ -1,0 +1,90 @@
+HOY
+
+✅ slow query log
+✅ Performance Insights
+✅ reserved concurrency
+✅ MAX_EXECUTION_TIME
+✅ connection_borrow_timeout
+
+ESTA SEMANA
+
+✅ mover SELECT al reader endpoint
+✅ identificar top 10 queries CPU
+✅ validar índices faltantes
+
+DESPUÉS
+
+✅ Redis
+✅ async queues
+✅ separación Financix DB propia.
+
+
+
+Paso a paso
+
+
+1. Reserved Concurrency (El "Freno de Mano")
+
+No dejes que una sola Lambda consuma todas las conexiones del Proxy o la CPU del RDS.
+
+    Cálculo: Si tu RDS soporta, por ejemplo, 100 conexiones totales:
+
+        cima.test: (Prioridad alta/muchas conexiones) → Reserva 30-35.
+
+        cima.Financix: (La problemática) → Reserva 10-15. Aunque tenga "5" en tu métrica, en un pico subirá. Limitarla evita que hunda el barco.
+
+    Acción: Configura el Reserved Concurrency en la consola de AWS Lambda para cada una.
+
+
+
+
+
+2. MAX_EXECUTION_TIME (El "Kill Switch" de Query)
+
+Viendo que tienes procesos de 773s, necesitas matar la query antes de que llegue ahí.
+
+    Recomendación: Establece un límite de 30 a 60 segundos. Es mejor que una query falle rápido a que se quede 10 minutos quemando CPU.
+
+    Implementación: * A nivel de query: SELECT /*+ MAX_EXECUTION_TIME(30000) */ count(*) ... (en milisegundos).
+
+        O en el parámetro del grupo de RDS: max_execution_time = 30000. 
+
+
+
+
+3. Connection Borrow Timeout (Proxy)
+
+Esto controla cuánto espera la Lambda a que el Proxy le dé una conexión.
+
+    Si la DB está lenta (como en la imagen): El Proxy se queda sin conexiones disponibles.
+
+    Configuración: Si tu Lambda tiene un timeout de 30s, pon el connection_borrow_timeout en 10s o 15s.
+
+    Resultado: La Lambda falla rápido ("Fail-fast") en lugar de quedarse colgada esperando una conexión que nunca llegará porque Financix las tiene todas ocupadas con queries de 700s.	
+
+
+
+Módulo                  Documento       Recomendado
+cima.Financix              15              5
+cima.test                45-50             20
+MAX_EXEC_TIME global     no hay limite     30 segundos 
+connection_borrow_timeout                  10 segundo
+
+
+
+
+AWS Console
+→ RDS
+Proxies
+
+proxy-cima
+
+Target groups
+
+
+Connection pool configuration
+o
+Edit connection pool
+
+
+
